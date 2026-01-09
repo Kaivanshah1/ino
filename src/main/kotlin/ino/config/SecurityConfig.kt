@@ -22,7 +22,6 @@ class SecurityConfig {
             .csrf { csrf ->
                 csrf.ignoringRequestMatchers("/api/v1/**")
             }
-//            .csrf { it.disable() }
             .sessionManagement { session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Stateful sessions
                     .maximumSessions(1) // Allow only one session per user

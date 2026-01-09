@@ -1,9 +1,9 @@
 package ino.controller
 
 import ino.dto.CreateOrganizationRequest
-import ino.dto.FindAllOrganizationsRequest
-import ino.dto.OrganizationResponse
+import ino.dto.ListRequest
 import ino.dto.UpdateOrganizationRequest
+import ino.model.Organization
 import ino.service.OrganizationService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,26 +18,21 @@ class OrganizationController(
     @PostMapping("/create")
     fun createOrganization(
         @RequestBody request: CreateOrganizationRequest
-    ): ResponseEntity<OrganizationResponse> {
+    ): ResponseEntity<Organization> {
         val response = organizationService.createOrganization(request)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @GetMapping("/get/{id}")
-    fun getOrganizationById(@PathVariable id: String): ResponseEntity<OrganizationResponse> {
-        return try {
-            val response = organizationService.getOrganizationById(id)
-            ResponseEntity.ok(response)
-        } catch (e: RuntimeException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(OrganizationResponse("", null, null, null, null, 0, 0))
-        }
+    fun getOrganizationById(@PathVariable id: String): ResponseEntity<Organization> {
+        val response = organizationService.getOrganizationById(id)
+        return ResponseEntity.ok(response)
     }
 
     @PostMapping("/list")
     fun getAllOrganizations(
-        @RequestBody request: FindAllOrganizationsRequest
-    ): ResponseEntity<List<OrganizationResponse>> {
+        @RequestBody request: ListRequest
+    ): ResponseEntity<List<Organization>> {
         val organizations = organizationService.listOrganizations(
             request.search,
             request.getAll,
@@ -50,24 +45,14 @@ class OrganizationController(
     @PostMapping("/update")
     fun updateOrganization(
         @RequestBody request: UpdateOrganizationRequest
-    ): ResponseEntity<OrganizationResponse> {
-        return try {
-            val response = organizationService.updateOrganization(request.id, request)
-            ResponseEntity.ok(response)
-        } catch (e: RuntimeException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(OrganizationResponse("", null, null, null, null, 0, 0))
-        }
+    ): ResponseEntity<Organization> {
+        val response = organizationService.updateOrganization(request.id, request)
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/email/{email}")
-    fun getOrganizationByEmail(@PathVariable email: String): ResponseEntity<OrganizationResponse> {
+    fun getOrganizationByEmail(@PathVariable email: String): ResponseEntity<Organization> {
         val organization = organizationService.getOrganizationByEmail(email)
-        return if (organization != null) {
-            ResponseEntity.ok(organization)
-        } else {
-            ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(OrganizationResponse("", null, null, null, null, 0, 0))
-        }
+        return ResponseEntity.ok(organization)
     }
 }

@@ -4,7 +4,6 @@ import ino.dto.AuthResponse
 import ino.dto.CreateUserRequest
 import ino.dto.RegisterRequest
 import ino.dto.UpdateUserRequest
-import ino.dto.UserResponse
 import ino.model.User
 import ino.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -64,14 +63,10 @@ class UserService(
         return authResponse
     }
 
-    fun getUserById(id: String): UserResponse {
+    fun getUserById(id: String): User {
         val user = userRepository.findById(id)
             ?: throw RuntimeException("User with id $id not found")
-        return toResponse(user)
-    }
-
-    fun getAllUsers(): List<UserResponse> {
-        return userRepository.findAll().map { toResponse(it) }
+        return user
     }
 
     fun getAllUsers(
@@ -79,11 +74,11 @@ class UserService(
         getAll: Boolean,
         page: Int,
         size: Int
-    ): List<UserResponse> {
-        return userRepository.findAll(search, getAll, page, size).map { toResponse(it) }
+    ): List<User> {
+        return userRepository.findAll(search, getAll, page, size)
     }
 
-    fun updateUser(id: String, request: UpdateUserRequest): UserResponse {
+    fun updateUser(id: String, request: UpdateUserRequest): User {
         val existing = userRepository.findById(id)
             ?: throw RuntimeException("User with id $id not found")
 
@@ -100,28 +95,15 @@ class UserService(
         )
 
         userRepository.update(updated)
-        return toResponse(updated)
+        return updated
     }
 
-    fun getUserByEmail(email: String): UserResponse? {
+    fun getUserByEmail(email: String): User? {
         val user = userRepository.findByEmail(email)
-        return user?.let { toResponse(it) }
+        return user
     }
 
-    fun getUsersByOrganizationId(organizationId: String): List<UserResponse> {
-        return userRepository.findByOrganizationId(organizationId).map { toResponse(it) }
-    }
-
-    private fun toResponse(user: User): UserResponse {
-        return UserResponse(
-            id = user.id,
-            name = user.name,
-            phoneNumber = user.phoneNumber,
-            email = user.email,
-            organizationId = user.organizationId,
-            status = user.status,
-            createdAt = user.createdAt,
-            updatedAt = user.updatedAt
-        )
+    fun getUsersByOrganizationId(organizationId: String): List<User> {
+        return userRepository.findByOrganizationId(organizationId)
     }
 }

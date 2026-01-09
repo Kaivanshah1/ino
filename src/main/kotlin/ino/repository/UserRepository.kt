@@ -47,13 +47,6 @@ class UserRepository {
         }
     }
     
-    fun findAll(): List<User> {
-        return transaction {
-            Users.selectAll()
-                .map { rowToUser(it) }
-        }
-    }
-    
     fun findAll(search: String?, getAll: Boolean, page: Int, size: Int): List<User> {
         return transaction {
             val searchPattern = if (!search.isNullOrBlank()) "%$search%" else null

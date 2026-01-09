@@ -1,19 +1,10 @@
 package ino.repository
 
+import ino.model.Organization
 import ino.model.Organizations
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
-
-data class Organization(
-    val id: String,
-    val name: String?,
-    val phoneNumber: String?,
-    val email: String?,
-    val status: String?,
-    val createdAt: Long,
-    val updatedAt: Long
-)
 
 @Repository
 class OrganizationRepository {
@@ -51,14 +42,7 @@ class OrganizationRepository {
                 .firstOrNull()
         }
     }
-    
-    fun findAll(): List<Organization> {
-        return transaction {
-            Organizations.selectAll()
-                .map { rowToOrganization(it) }
-        }
-    }
-    
+
     fun listOrganizations(search: String?, getAll: Boolean, page: Int, size: Int): List<Organization> {
         return transaction {
             val searchPattern = if (!search.isNullOrBlank()) "%$search%" else null

@@ -5,6 +5,7 @@ import ino.dto.AuthResponseWithSession
 import ino.dto.LoginRequest
 import ino.dto.RegisterRequest
 import ino.service.AuthService
+import ino.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
@@ -15,7 +16,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val userService: UserService
 ) {
     @PostMapping("/register")
     fun register(@RequestBody registerRequest: RegisterRequest): ResponseEntity<AuthResponse> {
@@ -42,15 +44,16 @@ class AuthController(
         return ResponseEntity.ok(mapOf("message" to "Logout successful"))
     }
 
-    @GetMapping("/session-info")
+    @GetMapping("/getSession")
     fun getSessionInfo(request: HttpServletRequest): ResponseEntity<Map<String, Any?>> {
         val session = request.getSession(false)
         return if (session != null) {
+            val userId = authService.getSessionAttribute(request, "userId") as? String
+            val user = userId?.let { userService.getUserById(it) }
+            
             ResponseEntity.ok(mapOf(
-                "userId" to authService.getSessionAttribute(request, "userId"),
-                "userEmail" to authService.getSessionAttribute(request, "userEmail"),
-                "loginTime" to authService.getSessionAttribute(request, "loginTime"),
-                "sessionId" to session.id
+                "sessionId" to session.id,
+                "user" to user
             ))
         } else {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED)

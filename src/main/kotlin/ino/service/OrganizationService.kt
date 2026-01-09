@@ -1,9 +1,8 @@
 package ino.service
 
 import ino.dto.CreateOrganizationRequest
-import ino.dto.OrganizationResponse
 import ino.dto.UpdateOrganizationRequest
-import ino.repository.Organization
+import ino.model.Organization
 import ino.repository.OrganizationRepository
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -13,7 +12,7 @@ import java.util.UUID
 class OrganizationService(
     private val organizationRepository: OrganizationRepository
 ) {
-    fun createOrganization(request: CreateOrganizationRequest): OrganizationResponse {
+    fun createOrganization(request: CreateOrganizationRequest): Organization {
         val organizationId = UUID.randomUUID().toString()
         val now = Instant.now().toEpochMilli()
 
@@ -28,13 +27,13 @@ class OrganizationService(
         )
 
         organizationRepository.save(organization)
-        return toResponse(organization)
+        return organization
     }
 
-    fun getOrganizationById(id: String): OrganizationResponse {
+    fun getOrganizationById(id: String): Organization {
         val organization = organizationRepository.findById(id)
             ?: throw RuntimeException("Organization with id $id not found")
-        return toResponse(organization)
+        return organization
     }
 
     fun listOrganizations(
@@ -42,11 +41,11 @@ class OrganizationService(
         getAll: Boolean,
         page: Int,
         size: Int
-    ): List<OrganizationResponse> {
-        return organizationRepository.listOrganizations(search, getAll, page, size).map { toResponse(it) }
+    ): List<Organization> {
+        return organizationRepository.listOrganizations(search, getAll, page, size)
     }
 
-    fun updateOrganization(id: String, request: UpdateOrganizationRequest): OrganizationResponse {
+    fun updateOrganization(id: String, request: UpdateOrganizationRequest): Organization {
         val existing = organizationRepository.findById(id)
             ?: throw RuntimeException("Organization with id $id not found")
 
@@ -61,23 +60,11 @@ class OrganizationService(
         )
 
         organizationRepository.update(updated)
-        return toResponse(updated)
+        return updated
     }
 
-    fun getOrganizationByEmail(email: String): OrganizationResponse? {
+    fun getOrganizationByEmail(email: String): Organization? {
         val organization = organizationRepository.findByEmail(email)
-        return organization?.let { toResponse(it) }
-    }
-
-    private fun toResponse(organization: Organization): OrganizationResponse {
-        return OrganizationResponse(
-            id = organization.id,
-            name = organization.name,
-            phoneNumber = organization.phoneNumber,
-            email = organization.email,
-            status = organization.status,
-            createdAt = organization.createdAt,
-            updatedAt = organization.updatedAt
-        )
+        return organization
     }
 }

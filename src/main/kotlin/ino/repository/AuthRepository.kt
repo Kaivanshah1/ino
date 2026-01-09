@@ -35,14 +35,6 @@ class AuthRepository {
             }
         }
     }
-    
-    fun findById(id: String): UserAuth? {
-        return transaction {
-            UserAuths.select { UserAuths.id eq id }
-                .map { rowToUserAuth(it) }
-                .firstOrNull()
-        }
-    }
 
     fun findByUserName(userName: String): UserAuth {
         return transaction {

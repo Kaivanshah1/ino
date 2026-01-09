@@ -2,9 +2,9 @@ package ino.controller
 
 import ino.dto.AuthResponse
 import ino.dto.CreateUserRequest
-import ino.dto.FindAllUsersRequest
+import ino.dto.ListRequest
 import ino.dto.UpdateUserRequest
-import ino.dto.UserResponse
+import ino.model.User
 import ino.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -25,20 +25,15 @@ class UserController(
     }
 
     @GetMapping("/get/{id}")
-    fun getUserById(@PathVariable id: String): ResponseEntity<UserResponse> {
-        return try {
-            val response = userService.getUserById(id)
-            ResponseEntity.ok(response)
-        } catch (e: RuntimeException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(UserResponse("", null, null, null, null, null, 0, 0))
-        }
+    fun getUserById(@PathVariable id: String): ResponseEntity<User> {
+        val response = userService.getUserById(id)
+        return ResponseEntity.ok(response)
     }
 
     @PostMapping("/list")
     fun getAllUsers(
-        @RequestBody request: FindAllUsersRequest
-    ): ResponseEntity<List<UserResponse>> {
+        @RequestBody request: ListRequest
+    ): ResponseEntity<List<User>> {
         val users = userService.getAllUsers(
             request.search,
             request.getAll,
@@ -51,31 +46,21 @@ class UserController(
     @PostMapping("/update")
     fun updateUser(
         @RequestBody request: UpdateUserRequest
-    ): ResponseEntity<UserResponse> {
-        return try {
-            val response = userService.updateUser(request.id, request)
-            ResponseEntity.ok(response)
-        } catch (e: RuntimeException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(UserResponse("", null, null, null, null, null, 0, 0))
-        }
+    ): ResponseEntity<User> {
+        val response = userService.updateUser(request.id, request)
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{email}")
-    fun getUserByEmail(@PathVariable email: String): ResponseEntity<UserResponse> {
+    fun getUserByEmail(@PathVariable email: String): ResponseEntity<User> {
         val user = userService.getUserByEmail(email)
-        return if (user != null) {
-            ResponseEntity.ok(user)
-        } else {
-            ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(UserResponse("", null, null, null, null, null, 0, 0))
-        }
+        return ResponseEntity.ok(user)
     }
 
     @GetMapping("/{organizationId}")
     fun getUsersByOrganizationId(
         @PathVariable organizationId: String
-    ): ResponseEntity<List<UserResponse>> {
+    ): ResponseEntity<List<User>> {
         val users = userService.getUsersByOrganizationId(organizationId)
         return ResponseEntity.ok(users)
     }

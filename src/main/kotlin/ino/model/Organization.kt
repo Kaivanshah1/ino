@@ -13,3 +13,13 @@ object Organizations : Table("organization") {
     
     override val primaryKey = PrimaryKey(id)
 }
+
+data class Organization(
+    val id: String,
+    val name: String?,
+    val phoneNumber: String?,
+    val email: String?,
+    val status: String?,
+    val createdAt: Long,
+    val updatedAt: Long
+)

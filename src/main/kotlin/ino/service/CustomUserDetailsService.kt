@@ -14,17 +14,17 @@ class CustomUserDetailsService(
     private val authRepository: AuthRepository
 ) : UserDetailsService {
 
-    override fun loadUserByUsername(email: String): UserDetails {
+    override fun loadUserByUsername(username: String): UserDetails {
         val userAuth = try {
-            authRepository.findByEmail(email)
+            authRepository.findByUserName(username)
         } catch (e: Exception) {
-            throw UsernameNotFoundException("User not found with email: $email", e)
+            throw UsernameNotFoundException("User not found with username: $username", e)
         }
 
         val authorities: List<GrantedAuthority> = listOf(SimpleGrantedAuthority("ROLE_USER"))
 
         return User.builder()
-            .username(userAuth.email)
+            .username(userAuth.username)
             .password(userAuth.hashPassword ?: "")
             .authorities(authorities)
             .accountExpired(false)

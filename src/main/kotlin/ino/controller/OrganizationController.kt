@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*
 class OrganizationController(
     private val organizationService: OrganizationService
 ) {
+
     @PostMapping("/create")
     fun createOrganization(
         @RequestBody request: CreateOrganizationRequest

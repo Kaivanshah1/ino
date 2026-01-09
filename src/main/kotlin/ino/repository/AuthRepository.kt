@@ -14,8 +14,8 @@ class AuthRepository {
             transaction {
                 UserAuths.insert {
                     it[id] = userAuth.id
-                    it[userId] = userAuth.id  // Using id as userId since they're the same
-                    it[username] = userAuth.email  // Mapping email to username
+                    it[userId] = userAuth.userId
+                    it[username] = userAuth.username  // Mapping email to username
                     it[hashPassword] = userAuth.hashPassword
                     it[createdAt] = userAuth.createdAt
                     it[updatedAt] = userAuth.updatedAt
@@ -29,7 +29,7 @@ class AuthRepository {
     fun update(userAuth: UserAuth) {
         transaction {
             UserAuths.update({ UserAuths.id eq userAuth.id }) {
-                it[username] = userAuth.email
+                it[username] = userAuth.username
                 it[hashPassword] = userAuth.hashPassword
                 it[updatedAt] = userAuth.updatedAt
             }
@@ -44,20 +44,25 @@ class AuthRepository {
         }
     }
 
-    fun findByEmail(email: String): UserAuth {
+    fun findByUserName(userName: String): UserAuth {
         return transaction {
-            UserAuths.select { UserAuths.username eq email }
+            UserAuths.select { UserAuths.username eq userName }
                 .map { rowToUserAuth(it) }
                 .firstOrNull()
-        } ?: throw RuntimeException("User not found with email: $email")
+        } ?: throw RuntimeException("User not found with email: $userName")
     }
-    
+
+    fun existsByUserName(userName: String): Boolean {
+        return transaction {
+            UserAuths.select { UserAuths.username eq userName }.count() > 0
+        }
+    }
+
     private fun rowToUserAuth(row: ResultRow): UserAuth {
         return UserAuth(
             id = row[UserAuths.id],
             userId = row[UserAuths.userId],
             username = row[UserAuths.username],
-            email = row[UserAuths.username],  // Mapping username to email
             hashPassword = row[UserAuths.hashPassword],
             createdAt = row[UserAuths.createdAt],
             updatedAt = row[UserAuths.updatedAt]

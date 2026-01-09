@@ -17,7 +17,6 @@ data class UserAuth(
     val id: String,
     val userId: String,
     val username: String,
-    val email: String,
     val hashPassword: String?,
     val createdAt: Long,
     val updatedAt: Long

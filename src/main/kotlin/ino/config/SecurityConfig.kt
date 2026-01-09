@@ -19,10 +19,10 @@ class SecurityConfig {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-//            .csrf { csrf ->
-//                csrf.ignoringRequestMatchers("/api/v1/auth/**", "/api/v1/organizations/create")
-//            }
-            .csrf { it.disable() }
+            .csrf { csrf ->
+                csrf.ignoringRequestMatchers("/api/v1/**")
+            }
+//            .csrf { it.disable() }
             .sessionManagement { session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Stateful sessions
                     .maximumSessions(1) // Allow only one session per user

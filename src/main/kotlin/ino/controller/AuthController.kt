@@ -42,23 +42,6 @@ class AuthController(
         return ResponseEntity.ok(mapOf("message" to "Logout successful"))
     }
 
-    @GetMapping("/me")
-    fun getCurrentUser(): ResponseEntity<AuthResponse> {
-        return try {
-            val user = authService.getCurrentUser()
-            ResponseEntity.ok(
-                AuthResponse(
-                    userId = user.id,
-                    email = user.email,
-                    message = "Current user information"
-                )
-            )
-        } catch (e: Exception) {
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(AuthResponse("", "", "Not authenticated"))
-        }
-    }
-
     @GetMapping("/session-info")
     fun getSessionInfo(request: HttpServletRequest): ResponseEntity<Map<String, Any?>> {
         val session = request.getSession(false)

@@ -1,5 +1,6 @@
 package ino.controller
 
+import ino.dto.AuthResponse
 import ino.dto.CreateUserRequest
 import ino.dto.FindAllUsersRequest
 import ino.dto.UpdateUserRequest
@@ -15,11 +16,13 @@ class UserController(
     private val userService: UserService
 ) {
 
-//    @PostMapping("/create")
-//    fun createUser(@RequestBody request: CreateUserRequest): ResponseEntity<UserResponse> {
-//        val response = userService.createUser(request)
-//        return ResponseEntity.status(HttpStatus.CREATED).body(response)
-//    }
+    @PostMapping("/create")
+    fun createUser(
+        @RequestBody request: CreateUserRequest,
+    ): ResponseEntity<AuthResponse> {
+        val response = userService.createUser(request)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+    }
 
     @GetMapping("/get/{id}")
     fun getUserById(@PathVariable id: String): ResponseEntity<UserResponse> {

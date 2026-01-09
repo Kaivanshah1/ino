@@ -7,7 +7,6 @@ import ino.dto.UpdateUserRequest
 import ino.model.User
 import ino.service.AuthService
 import ino.service.UserService
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/users")
 class UserController(
     private val userService: UserService,
-    private val authService: AuthService
 ) {
 
     @PostMapping("/create")
@@ -68,19 +66,4 @@ class UserController(
         return ResponseEntity.ok(users)
     }
 
-    @GetMapping("/get-session")
-    fun getSessionInfo(request: HttpServletRequest): ResponseEntity<Any> {
-        val session = request.getSession(false)
-        return (if (session != null) {
-            val userId = authService.getSessionAttribute(request, "userId") as? String
-            val user = userId?.let { userService.getUserById(it) }
-
-            ResponseEntity.ok(mapOf(
-                "sessionId" to session.id,
-                "user" to user
-            ))
-        } else {
-            ResponseEntity.ok(null)
-        })
-    }
 }

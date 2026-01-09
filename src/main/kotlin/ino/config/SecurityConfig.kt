@@ -29,7 +29,7 @@ class SecurityConfig {
             }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+                    .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/users/get-session").permitAll()
                     .anyRequest().authenticated()
             }
             .httpBasic { } // Enable HTTP Basic authentication for API

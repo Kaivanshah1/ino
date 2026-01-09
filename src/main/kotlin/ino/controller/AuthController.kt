@@ -44,7 +44,7 @@ class AuthController(
         return ResponseEntity.ok(mapOf("message" to "Logout successful"))
     }
 
-    @GetMapping("/getSession")
+    @GetMapping("/get-session")
     fun getSessionInfo(request: HttpServletRequest): ResponseEntity<Map<String, Any?>> {
         val session = request.getSession(false)
         return if (session != null) {
